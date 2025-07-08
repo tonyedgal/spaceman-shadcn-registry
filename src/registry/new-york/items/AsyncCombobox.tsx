@@ -1,6 +1,5 @@
 import {
   useCallback,
-  useEffect,
   useState,
   useImperativeHandle,
   forwardRef,
@@ -53,7 +52,7 @@ const AsyncComboBox = forwardRef(function AsyncComboBox<T>(
   ref: React.Ref<{ clear: () => void }>
 ) {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState<T | undefined>();
+  const [value, setValue] = useState<T | undefined>(selected);
 
   const handleSetActive = useCallback(
     (item: T) => {
@@ -63,10 +62,6 @@ const AsyncComboBox = forwardRef(function AsyncComboBox<T>(
     },
     [onChange]
   );
-
-  useEffect(() => {
-    if (!value && selected) setValue(selected);
-  }, [selected, value]);
 
   const displayName = value
     ? renderItem(value)
@@ -80,28 +75,23 @@ const AsyncComboBox = forwardRef(function AsyncComboBox<T>(
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
+          variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="flex h-9 w-full cursor-default items-center justify-between whitespace-nowrap rounded-sm 
-              bg-neutral-700 py-2 pl-4 pr-2 text-left text-sm font-normal text-neutral-50 text-opacity-70 shadow-sm 
-              transition-colors hover:bg-neutral-600 hover:text-neutral-50 focus-visible:outline-none focus-visible:ring-1 
-              focus-visible:ring-neutral-950 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-neutral-300"
+          className="w-[200px] justify-between"
         >
           {displayName}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto rounded-md border-none p-0">
-        <Command
-          shouldFilter={false}
-          className="w-96 rounded-none bg-neutral-800 drop-shadow-xl"
-        >
+      <PopoverContent className="w-[200px] p-0">
+        <Command shouldFilter={false}>
           <CommandInput
             placeholder={`Search ${placeholder}`}
             onValueChange={onSearch}
-            className="text-neutral-200"
+            className="h-9"
           />
-          <ScrollArea className="max-h-72 w-96">
+          <ScrollArea className="max-h-72 w-[200px]">
             <CommandGroup>
               {isLoading && <div className="p-4 text-sm">Searching...</div>}
               {!isError && !isLoading && !data?.length && query.length > 0 && (
